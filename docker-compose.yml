@@ -1,0 +1,25 @@
+version: '3.4'
+services:
+  app:
+    build: .
+    container_name: FINAL_LOCAL_RAG
+    command: uvicorn FINAL_LOCAL_RAG.main:app --host 0.0.0.0 --port 80 --reload
+    ports:
+      - 80:80
+      - 50051:50051
+    volumes:
+      - .:/code
+
+  weaviate:
+    image: semitechnologies/weaviate:1.18.4
+    ports:
+    - 8080:8080
+    restart: on-failure:0
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      ENABLE_MODULES: 'text2vec-cohere'
+      CLUSTER_HOSTNAME: 'node1'
+
